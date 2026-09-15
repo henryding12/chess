@@ -63,6 +63,9 @@ public class ChessPiece {
             case KING:
                 calc = new KingMovesCalculator();
                 break;
+            case KNIGHT:
+                calc = new KnightMoveCalculator();
+                break;
             default:
                 throw new IllegalMonitorStateException("Unknown piece type" + this.getPieceType());
         }
