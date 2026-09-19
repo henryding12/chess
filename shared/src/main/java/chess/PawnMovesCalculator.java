@@ -35,9 +35,18 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                     r = r - 1;
                 }
             } else {
+                // check if moved 2 that a piece isn't in front of it
                 if (board.getPiece(myPosition).getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    ChessPiece inFront = board.getPiece(new ChessPosition(r + 1, c));
+                    if (inFront != null) {
+                        break; // exit if a piece is blocking a double advancement
+                    }
                     r = r + 2;
                 } else {
+                    ChessPiece inFront = board.getPiece(new ChessPosition(r - 1, c));
+                    if (inFront != null) {
+                        break; // exit if a piece is blocking a double advancement
+                    }
                     r = r - 2;
                 }
             }
@@ -46,14 +55,23 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
                 ChessPosition newPos = new ChessPosition(r, c);
                 ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
                 int slotsMoved = abs(myPosition.getRow() - r);
-                if ((board.getPiece(newPos) == null && (i == 0 || i == 3))
-                    || (board.getPiece(newPos) != null && board.getPiece(newPos).getTeamColor() != myColor)
-                    && board.getPiece(newPos).getPieceType() != ChessPiece.PieceType.KNIGHT) {
+                if ( ((i == 0 || i == 3) && board.getPiece(newPos) == null)
+                    || ((i == 1 || i == 2) && board.getPiece(newPos) != null && board.getPiece(newPos).getTeamColor() != myColor) ) {
 
                     // only can move two slots if in starting position
                     if (slotsMoved == 1 || myPosition.getRow() == 2 || myPosition.getRow() == 7) {
-                        ChessMove newMove = new ChessMove(myPosition, newPos, null);
-                        moves.add(newMove);
+
+                        // check if promotion
+                        if (r == 8 || r == 1) {
+                            moves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
+                            moves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+                            moves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
+                            moves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+                        } else {
+                            // else no promotion move
+                            moves.add(new ChessMove(myPosition, newPos, null));
+                        }
+
                     }
 
                 }
