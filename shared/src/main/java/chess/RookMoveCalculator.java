@@ -14,13 +14,23 @@ public class RookMoveCalculator implements PieceMovesCalculator{
         int  myPositionColumn = myPosition.getColumn();
         ChessGame.TeamColor myPositionColor = board.getPiece(myPosition).getTeamColor();
 
-
         int upDistance = 8 - myPositionRow;
         int downDistance = myPositionRow - 1;
-        int[][] rookArgs = {{upDistance, 1}, {downDistance, -1}};
+        int leftDistance = myPositionColumn - 1;
+        int rightDistance = 8 - myPositionColumn;
+        // distance, row=0;column=1 , movement direction
+        int[][] rookArgs = {{upDistance, 0, 1}, {downDistance, 0, -1}, {leftDistance, 1, -1}, {rightDistance, 1, 1}};
         for (var arg : rookArgs) {
-            for (int i = 1; i < arg[0]; i=i+arg[1]) {
-                ChessPosition newPosition = new ChessPosition(myPositionRow + i*arg[1], myPositionColumn);
+            for (int i = 1; i <= arg[0]; i++) {
+                int r = myPositionRow;
+                int c = myPositionColumn;
+                if (arg[1] == 0) {
+                    r = r + i*arg[2];
+                } else {
+                    c = c + i*arg[2];
+                }
+                ChessPosition newPosition = new ChessPosition(r, c);
+
                 if (board.getPiece(newPosition) == null) {
                     potentialPositions.add(newPosition);
                 } else {
