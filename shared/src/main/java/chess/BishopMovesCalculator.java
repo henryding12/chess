@@ -14,7 +14,7 @@ public class BishopMovesCalculator implements PieceMovesCalculator{
 
             // check for movement criteria
             boolean hitPiece = false;
-            while(!hitPiece && r > 1 && r < 8 && c > 1 && c < 8) {
+            while(!hitPiece) {
                 if (i == 0) {
                     // towards top right
                     r = r + 1;
@@ -32,9 +32,12 @@ public class BishopMovesCalculator implements PieceMovesCalculator{
                     r = r - 1;
                     c = c + 1;
                 }
-
+                // is the position in the board?
+                if (r < 1 || r > 8 || c < 1 || c > 8) {
+                    break;
+                }
                 ChessPosition newPos = new ChessPosition(r, c);
-                // do we hit an enemy piece?
+                // do we hit a piece?
                 if (board.getPiece(newPos) != null) {
                     hitPiece = true;
                 }
