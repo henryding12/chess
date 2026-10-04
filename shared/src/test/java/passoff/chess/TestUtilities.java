@@ -98,4 +98,6 @@ public class TestUtilities {
         return 1000 * positionToInt(move.getStartPosition()) + 10 * positionToInt(move.getEndPosition()) +
                 ((move.getPromotionPiece() != null) ? move.getPromotionPiece().ordinal() + 1 : 0);
     }
+
+
 }

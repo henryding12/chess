@@ -82,6 +82,48 @@ public class ChessPiece {
         return calc.pieceMoves(board, myPosition);
     }
 
+    public String getSymbol() {
+        if (getPieceType() == PieceType.PAWN) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "P";
+            } else {
+                return "p";
+            }
+         } else if (getPieceType() == PieceType.ROOK) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "R";
+            } else {
+                return "r";
+            }
+        } else if (getPieceType() == PieceType.KNIGHT) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "N";
+            } else {
+                return "n";
+            }
+        } else if (getPieceType() == PieceType.BISHOP) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "B";
+            } else {
+                return "b";
+            }
+        } else if (getPieceType() == PieceType.QUEEN) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "Q";
+            } else {
+                return "q";
+            }
+        } else if (getPieceType() == PieceType.KING) {
+            if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+                return "K";
+            } else {
+                return "k";
+            }
+        }  else {
+            return "";
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
@@ -94,5 +136,13 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return Objects.hash(pieceColor, type);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                '}';
     }
 }

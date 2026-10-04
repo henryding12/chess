@@ -11,8 +11,8 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    ChessPiece[][] squares = new ChessPiece[8][8];
-    // set board
+    private ChessPiece[][] squares = new ChessPiece[8][8];
+    // define pieces
     ChessPiece P = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
     ChessPiece R = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
     ChessPiece N = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
@@ -103,5 +103,29 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        String output;
+        output = "|";
+        ChessPiece piece;
+        for (int r = 7; r >= 0; r--) {
+            for (int c = 0; c <= 7; c++) {
+                piece = squares[r][c];
+                if (piece == null) {
+                    output = output + " " + "|";
+                } else {
+                    output = output + piece.getSymbol() + "|";
+                }
+
+            }
+            // adding a newline between rows
+            if (r > 0) {
+                output = output + "\n" + "|";
+            }
+        }
+        return output;
+
     }
 }
