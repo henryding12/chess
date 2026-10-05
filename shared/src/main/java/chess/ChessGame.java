@@ -217,6 +217,11 @@ public class ChessGame {
             // return false if not
             return false;
         }
+        return validMoveExists(teamColor);
+    }
+
+    // helper function for isInCheckmate and isInStalemate
+    private boolean validMoveExists(TeamColor teamColor) {
         // find all the team pieces on the board
         ChessPosition temporaryPosition; // placeholder
         ChessPiece temporaryPiece; // placeholder
@@ -242,7 +247,6 @@ public class ChessGame {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -255,7 +259,20 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // if teamColor is up to play
+        if (turn != teamColor) {
+            return false;
+        }
+        // if checkmate
+        if (isInCheckmate(teamColor)) {
+            return false;
+        }
+        // if isInCheck
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+        return validMoveExists(teamColor);
     }
 
     /**
