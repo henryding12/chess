@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -66,7 +67,7 @@ public class ChessGame {
                 // deep copy theBoard
                 temporaryBoard = new ChessBoard(theBoard);
                 // make the move (private helper)
-                makeMove(piece, move, temporaryBoard);
+                makeMove(move, temporaryBoard);
                 // check if the king is in check
                 if (!isInCheck(piece.getTeamColor(), temporaryBoard)) {
                     // append to moves if the king isn't in check
@@ -86,12 +87,48 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = theBoard.getPiece(move.getStartPosition());
+
+        // check if a valid piece exists to move
+        if(piece == null) {
+            throw new InvalidMoveException("No piece there!");
+        }
+        // check if out of turn
+        if (piece.getTeamColor() != turn) {
+            throw new InvalidMoveException("Not your turn!");
+        }
+
+        Collection<ChessMove> validCollectionOfMoves = validMoves(move.getStartPosition());
+        boolean apartOf = false;
+        for (ChessMove  moveInstance : validCollectionOfMoves) {
+            if (moveInstance.getEndPosition().equals(move.getEndPosition())) {
+                apartOf = true;
+                break;
+            }
+        }
+        if (!apartOf) {
+            throw new InvalidMoveException("Not a valid move!");
+        } else {
+            // successfully move piece
+            makeMove(move, theBoard);
+            // set the turn for next
+            if (getTeamTurn() == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(TeamColor.WHITE);
+            }
+        }
     }
 
-    private void makeMove(ChessPiece piece, ChessMove move, ChessBoard board) {
-        // set endPosition to that piece
-        board.addPiece(move.getEndPosition(), piece);
+    private void makeMove(ChessMove move, ChessBoard board) {
+        // if no promotion
+        if (move.getPromotionPiece() == null) {
+            // set endPosition to that piece
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
+        } else {
+            // set endPosition to the promotion piece
+            board.addPiece(move.getEndPosition(), new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(), move.getPromotionPiece()));
+        }
         // remove the old Position (startPosition)
         board.addPiece(move.getStartPosition(), null);
     }
@@ -209,17 +246,24 @@ public class ChessGame {
     }
 
     @Override
-    public String toString() {
-        return super.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(theBoard, chessGame.theBoard) && turn == chessGame.turn;
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(theBoard, turn);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "theBoard=" + theBoard +
+                ", turn=" + turn +
+                '}';
     }
 }
