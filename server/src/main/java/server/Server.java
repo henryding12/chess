@@ -37,6 +37,9 @@ public class Server {
 
     private void clear(Context ctx) {
         adminService.clear();
+        ctx.status(200);
+        ctx.result("{}");
+
     };
 
 }
