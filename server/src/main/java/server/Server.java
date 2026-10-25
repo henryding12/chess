@@ -35,6 +35,7 @@ public class Server {
         javalin.delete("/db", this::clear);
         javalin.post("/user", this::addUser);
         javalin.post("/session", this::login);
+        javalin.delete("/session", this::logout);
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
         javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
@@ -70,6 +71,12 @@ public class Server {
         AuthData authData = userService.login(user);
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
+    }
+    private void logout(Context ctx) throws UnauthorizedException {
+        String token = ctx.header("authorization");
+        userService.logout(token);
+        ctx.status(200);
+        ctx.result("{}");
     }
 
     private void badRequestHandler(BadRequestException ex, Context ctx) {

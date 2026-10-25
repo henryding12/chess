@@ -55,6 +55,14 @@ public class UserService {
 
     }
 
+    public void logout(String token) throws UnauthorizedException {
+        AuthData result = authDAO.getAuth(token);
+        if (result == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        authDAO.deleteAuth(token);
+    }
+
 
     private static String generateToken() {
         return UUID.randomUUID().toString();
