@@ -50,6 +50,12 @@ public class GameServiceTest {
     }
 
     @Test
+    void createGameNegative2() throws UnauthorizedException, BadRequestException {
+        String badToken = "badtoken";
+        assertThrows(UnauthorizedException.class, () -> gameService.createGame(badToken, "Greatness"));
+    }
+
+    @Test
     void listGamesPositive() throws UnauthorizedException, BadRequestException {
         gameService.createGame(token, "Game 1");
         gameService.createGame(token, "Game 2");
@@ -68,16 +74,22 @@ public class GameServiceTest {
 
     @Test
     void joinGamePositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        gameService.createGame(token, "Game 1");
-        gameService.joinGame(token, "BLACK", 1);
-        assertEquals(memoryGameDAO.getGame(1).blackUsername(), memoryAuthDAO.getAuth(token).username());
+        int gameID = gameService.createGame(token, "Game 1");
+        gameService.joinGame(token, "BLACK", gameID);
+        assertEquals(memoryGameDAO.getGame(gameID).blackUsername(), memoryAuthDAO.getAuth(token).username());
     }
 
     @Test
     void joinGameNegative() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
-        gameService.createGame(token, "Game 1");
-        gameService.joinGame(token, "BLACK", 1);
-        assertThrows(AlreadyTakenException.class, () -> gameService.joinGame(token, "BLACK", 1));
+        int gameID = gameService.createGame(token, "Game 1");
+        gameService.joinGame(token, "BLACK", gameID);
+        assertThrows(AlreadyTakenException.class, () -> gameService.joinGame(token, "BLACK", gameID));
+    }
+
+    @Test
+    void joinGameNegative2() throws UnauthorizedException, BadRequestException {
+        String badToken = "badtoken";
+        assertThrows(UnauthorizedException.class, () -> gameService.joinGame(badToken, "WHITE", 0));
     }
 
 
