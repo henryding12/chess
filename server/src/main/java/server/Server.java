@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import model.AuthData;
@@ -33,8 +34,10 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
         javalin.post("/user", this::addUser);
+        javalin.post("/session", this::login);
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
+        javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
 
     }
 
@@ -60,7 +63,13 @@ public class Server {
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
 
+    }
 
+    private void login(Context ctx) throws BadRequestException, UnauthorizedException {
+        UserData user = new Gson().fromJson(ctx.body(), UserData.class);
+        AuthData authData = userService.login(user);
+        ctx.status(200);
+        ctx.result(new Gson().toJson(authData));
     }
 
     private void badRequestHandler(BadRequestException ex, Context ctx) {
@@ -69,6 +78,10 @@ public class Server {
     }
     private void alreadyTakenHandler(AlreadyTakenException ex, Context ctx) {
         ctx.status(403);
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+    }
+    private void unauthorizedHandler(UnauthorizedException ex, Context ctx){
+        ctx.status(401);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
 

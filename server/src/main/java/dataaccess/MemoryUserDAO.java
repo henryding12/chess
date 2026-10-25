@@ -10,11 +10,6 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public void createAuth() {
-
-    }
-
-    @Override
     public UserData getUser(String username) {
         return user.get(username);
     }
