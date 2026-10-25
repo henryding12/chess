@@ -4,6 +4,7 @@ import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
@@ -28,7 +29,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void positive() throws BadRequestException, AlreadyTakenException{
+    void registerPositive() throws BadRequestException, AlreadyTakenException{
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         assertEquals(user, memoryUserDAO.getUser(user.username())); // user stored properly
@@ -37,10 +38,27 @@ public class UserServiceTest {
     }
 
     @Test
-    void negative() throws BadRequestException, AlreadyTakenException{
+    void registerNegative() throws BadRequestException, AlreadyTakenException{
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         var dupUser = new UserData("henryding", "1233", "hello@email.com");
         assertThrows(AlreadyTakenException.class, () -> userService.register(dupUser));
     }
+
+    @Test
+    void loginPositive() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+        var user = new UserData("henryding", "1234", "henryding@email.com");
+        userService.register(user);
+        AuthData authData = userService.login(user);
+        assertNotNull(authData);
+    }
+
+    @Test
+    void loginNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+        var user = new UserData("henryding", "1234", "henryding@email.com");
+        userService.register(user);
+        UserData loginUser = new UserData("henryding", "badpassword", "henryding@email.com");
+        assertThrows(UnauthorizedException.class, () -> userService.login(loginUser));
+    }
+
 }
