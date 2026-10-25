@@ -11,8 +11,11 @@ import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import service.AdminService;
+import service.GameService;
 import service.UserService;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Server {
@@ -20,6 +23,7 @@ public class Server {
     private final Javalin javalin;
     private final AdminService adminService;
     private final UserService userService;
+    private final GameService gameService;
 
     public Server() {
         this(new MemoryUserDAO(), new MemoryGameDAO(), new MemoryAuthDAO());
@@ -28,6 +32,7 @@ public class Server {
     public Server(UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
         adminService = new AdminService(userDAO, gameDAO, authDAO);
         userService = new UserService(userDAO, authDAO);
+        gameService = new GameService(authDAO, gameDAO);
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -36,6 +41,8 @@ public class Server {
         javalin.post("/user", this::addUser);
         javalin.post("/session", this::login);
         javalin.delete("/session", this::logout);
+        javalin.post("/game", this::createGame);
+        javalin.get("/game", this::listGames);
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
         javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
@@ -77,6 +84,24 @@ public class Server {
         userService.logout(token);
         ctx.status(200);
         ctx.result("{}");
+    }
+
+    private void createGame(Context ctx) throws BadRequestException, UnauthorizedException {
+        String token = ctx.header("authorization");
+        Map body = new Gson().fromJson(ctx.body(), Map.class);
+        String gameName = (String) body.get("gameName");
+        int createGameResult = gameService.createGame(token, gameName);
+        ctx.status(200);
+        ctx.result(new Gson().toJson(Map.of("gameID", createGameResult)));
+    }
+
+    private void listGames(Context ctx) throws UnauthorizedException {
+        String token = ctx.header("authorization");
+        List listGameResult = gameService.listGames(token);
+        ctx.status(200);
+        ctx.result(new Gson().toJson(Map.of("games", listGameResult)));
+
+
     }
 
     private void badRequestHandler(BadRequestException ex, Context ctx) {
