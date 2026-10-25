@@ -13,18 +13,18 @@ public class ChessBoard {
 
     private ChessPiece[][] squares = new ChessPiece[8][8];
     // define pieces
-    private final ChessPiece P = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-    private final ChessPiece R = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-    private final ChessPiece N = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-    private final ChessPiece B = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-    private final ChessPiece Q = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-    private final ChessPiece K = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
-    private final ChessPiece p = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-    private final ChessPiece r = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
-    private final ChessPiece n = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
-    private final ChessPiece b = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
-    private final ChessPiece k = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
-    private final ChessPiece q = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+    private final ChessPiece whitePawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+    private final ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+    private final ChessPiece whiteKnight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+    private final ChessPiece whiteBishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+    private final ChessPiece whiteQueen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+    private final ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+    private final ChessPiece blackPawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+    private final ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+    private final ChessPiece blackKnight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+    private final ChessPiece blackBishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+    private final ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+    private final ChessPiece blackQueen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
 
     public ChessBoard() {
     }
@@ -62,38 +62,38 @@ public class ChessBoard {
      */
     public void resetBoard() {
         squares = new ChessPiece[8][8];
-        squares[7][0] = r;
-        squares[7][1] = n;
-        squares[7][2] = b;
-        squares[7][3] = q;
-        squares[7][4] = k;
-        squares[7][5] = b;
-        squares[7][6] = n;
-        squares[7][7] = r;
-        squares[6][0] = p;
-        squares[6][1] = p;
-        squares[6][2] = p;
-        squares[6][3] = p;
-        squares[6][4] = p;
-        squares[6][5] = p;
-        squares[6][6] = p;
-        squares[6][7] = p;
-        squares[0][0] = R;
-        squares[0][1] = N;
-        squares[0][2] = B;
-        squares[0][3] = Q;
-        squares[0][4] = K;
-        squares[0][5] = B;
-        squares[0][6] = N;
-        squares[0][7] = R;
-        squares[1][0] = P;
-        squares[1][1] = P;
-        squares[1][2] = P;
-        squares[1][3] = P;
-        squares[1][4] = P;
-        squares[1][5] = P;
-        squares[1][6] = P;
-        squares[1][7] = P;
+        squares[7][0] = blackRook;
+        squares[7][1] = blackKnight;
+        squares[7][2] = blackBishop;
+        squares[7][3] = blackQueen;
+        squares[7][4] = blackKing;
+        squares[7][5] = blackBishop;
+        squares[7][6] = blackKnight;
+        squares[7][7] = blackRook;
+        squares[6][0] = blackPawn;
+        squares[6][1] = blackPawn;
+        squares[6][2] = blackPawn;
+        squares[6][3] = blackPawn;
+        squares[6][4] = blackPawn;
+        squares[6][5] = blackPawn;
+        squares[6][6] = blackPawn;
+        squares[6][7] = blackPawn;
+        squares[0][0] = whiteRook;
+        squares[0][1] = whiteKnight;
+        squares[0][2] = whiteBishop;
+        squares[0][3] = whiteQueen;
+        squares[0][4] = whiteKing;
+        squares[0][5] = whiteBishop;
+        squares[0][6] = whiteKnight;
+        squares[0][7] = whiteRook;
+        squares[1][0] = whitePawn;
+        squares[1][1] = whitePawn;
+        squares[1][2] = whitePawn;
+        squares[1][3] = whitePawn;
+        squares[1][4] = whitePawn;
+        squares[1][5] = whitePawn;
+        squares[1][6] = whitePawn;
+        squares[1][7] = whitePawn;
 
     }
 

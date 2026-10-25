@@ -92,13 +92,13 @@ public class MoveUtils {
                     break;
                 }
                 if (moveDistance == 2 ) {
-                    ChessPiece WhitePieceBefore = board.getPiece(new ChessPosition(row - 1, col));
-                    ChessPiece BlackPieceBefore = board.getPiece(new ChessPosition(row + 1, col));
+                    ChessPiece whitePieceBefore = board.getPiece(new ChessPosition(row - 1, col));
+                    ChessPiece blackPieceBefore = board.getPiece(new ChessPosition(row + 1, col));
                     // only can move two from starting positions and can't move past a piece
-                    if (myColor == ChessGame.TeamColor.WHITE && (myPosition.getRow() != 2 || WhitePieceBefore != null)) {
+                    if (myColor == ChessGame.TeamColor.WHITE && (myPosition.getRow() != 2 || whitePieceBefore != null)) {
                         break;
                     }
-                    if (myColor == ChessGame.TeamColor.BLACK && (myPosition.getRow() != 7 || BlackPieceBefore != null)) {
+                    if (myColor == ChessGame.TeamColor.BLACK && (myPosition.getRow() != 7 || blackPieceBefore != null)) {
                         break;
                     }
 

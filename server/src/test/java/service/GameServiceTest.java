@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
 
-    static final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
-    static final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-    static final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+    private final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+    private final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+    private final MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
 
-    static final AdminService adminService = new AdminService(memoryUserDAO, memoryGameDAO, memoryAuthDAO);
-    static final UserService userService = new UserService(memoryUserDAO, memoryAuthDAO);
-    static final GameService gameService = new GameService(memoryAuthDAO, memoryGameDAO);
+    private final AdminService adminService = new AdminService(memoryUserDAO, memoryGameDAO, memoryAuthDAO);
+    private final UserService userService = new UserService(memoryUserDAO, memoryAuthDAO);
+    private final GameService gameService = new GameService(memoryAuthDAO, memoryGameDAO);
 
     private String token;
 
