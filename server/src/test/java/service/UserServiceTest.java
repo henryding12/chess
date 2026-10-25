@@ -61,4 +61,23 @@ public class UserServiceTest {
         assertThrows(UnauthorizedException.class, () -> userService.login(loginUser));
     }
 
+    @Test
+    void logoutPositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        var user = new UserData("henryding", "1234", "henryding@email.com");
+        AuthData authData = userService.register(user);
+        String token = authData.authToken();
+        userService.logout(token);
+        assertNull(memoryAuthDAO.getAuth(token));
+
+    }
+
+    @Test
+    void logoutNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+        var user = new UserData("henryding", "1234", "henryding@email.com");
+        AuthData authData = userService.register(user);
+        String badToken = "badtoken";
+        assertThrows(UnauthorizedException.class, () -> userService.logout(badToken));
+    }
+
+
 }
