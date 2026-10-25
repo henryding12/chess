@@ -10,7 +10,6 @@ import model.AuthData;
 import model.GameData;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class GameService {
@@ -27,12 +26,10 @@ public class GameService {
         if (result == null) {
             throw new UnauthorizedException("Error: unauthorized");
         } else if (gameName == null) {
-            throw new BadRequestException(("Error: bad request"));
+            throw new BadRequestException("Error: bad request");
         }
         ChessGame game = new ChessGame();
-
         return gameDAO.addGame(gameName, game);
-
     }
 
     public List listGames(String token) throws UnauthorizedException {
@@ -41,7 +38,6 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         return gameDAO.listGames();
-
     }
 
     public void joinGame(String token, String playerColor, int gameID) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
@@ -57,12 +53,5 @@ public class GameService {
         }
 
         gameDAO.updateGame(gameID, getAuthResult.username(), playerColor);
-
-
-
-
-
-
-
     }
 }

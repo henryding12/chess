@@ -1,6 +1,5 @@
 package chess;
 
-import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;

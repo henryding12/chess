@@ -7,16 +7,12 @@ import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import kotlin.UIntKt;
 import model.AuthData;
-import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import service.AdminService;
 import service.GameService;
 import service.UserService;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +34,6 @@ public class Server {
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Register your endpoints and exception handlers here.
         javalin.delete("/db", this::clear);
         javalin.post("/user", this::addUser);
         javalin.post("/session", this::login);
@@ -49,7 +44,6 @@ public class Server {
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
         javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
-
     }
 
     public int run(int desiredPort) {
@@ -65,7 +59,6 @@ public class Server {
         adminService.clear();
         ctx.status(200);
         ctx.result("{}");
-
     }
 
     private void addUser(Context ctx) throws BadRequestException, AlreadyTakenException {
@@ -73,7 +66,6 @@ public class Server {
         AuthData authData = userService.register(user);
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
-
     }
 
     private void login(Context ctx) throws BadRequestException, UnauthorizedException {
@@ -82,6 +74,7 @@ public class Server {
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
     }
+
     private void logout(Context ctx) throws UnauthorizedException {
         String token = ctx.header("authorization");
         userService.logout(token);
@@ -103,8 +96,6 @@ public class Server {
         List listGameResult = gameService.listGames(token);
         ctx.status(200);
         ctx.result(new Gson().toJson(Map.of("games", listGameResult)));
-
-
     }
 
     private void joinGame(Context ctx) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
@@ -120,21 +111,21 @@ public class Server {
         }
         ctx.status(200);
         ctx.result("{}");
-
     }
 
     private void badRequestHandler(BadRequestException ex, Context ctx) {
         ctx.status(400);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
+
     private void alreadyTakenHandler(AlreadyTakenException ex, Context ctx) {
         ctx.status(403);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
-    private void unauthorizedHandler(UnauthorizedException ex, Context ctx){
+
+    private void unauthorizedHandler(UnauthorizedException ex, Context ctx) {
         ctx.status(401);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
-
 }
 

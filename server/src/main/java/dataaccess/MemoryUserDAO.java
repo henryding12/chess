@@ -1,7 +1,10 @@
 package dataaccess;
-import model.*;
+
+import model.UserData;
+
 import java.util.HashMap;
-public class MemoryUserDAO implements UserDAO{
+
+public class MemoryUserDAO implements UserDAO {
     final private HashMap<String, UserData> user = new HashMap<>();
 
     @Override
@@ -18,5 +21,4 @@ public class MemoryUserDAO implements UserDAO{
     public void createUser(UserData userData) {
         user.put(userData.username(), userData);
     }
-
 }

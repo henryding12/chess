@@ -12,8 +12,6 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.basic.BasicDesktopIconUI;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
@@ -27,13 +25,13 @@ public class GameServiceTest {
     static final GameService gameService = new GameService(memoryAuthDAO, memoryGameDAO);
 
     private String token;
+
     @BeforeEach
     void clear() throws BadRequestException, AlreadyTakenException {
         adminService.clear();
         UserData user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         token = authData.authToken();
-
     }
 
     @Test
@@ -68,7 +66,6 @@ public class GameServiceTest {
         gameService.createGame(token, "Game 1");
         gameService.createGame(token, "Game 2");
         String faultyToken = "badToken";
-        // bad token
         assertThrows(UnauthorizedException.class, () -> gameService.listGames(faultyToken));
     }
 
@@ -91,6 +88,4 @@ public class GameServiceTest {
         String badToken = "badtoken";
         assertThrows(UnauthorizedException.class, () -> gameService.joinGame(badToken, "WHITE", 0));
     }
-
-
 }

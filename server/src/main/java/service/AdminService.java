@@ -9,13 +9,10 @@ public class AdminService {
     private final GameDAO gameDAO;
     private final AuthDAO authDAO;
 
-
     public AdminService(UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.gameDAO = gameDAO;
         this.authDAO = authDAO;
-
-
     }
 
     public void clear() {
@@ -23,5 +20,4 @@ public class AdminService {
         gameDAO.clear();
         authDAO.clear();
     }
-
 }

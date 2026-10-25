@@ -1,4 +1,5 @@
 package service;
+
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -7,14 +8,12 @@ import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserServiceTest {
-
 
     static final MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
     static final MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
@@ -29,7 +28,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void registerPositive() throws BadRequestException, AlreadyTakenException{
+    void registerPositive() throws BadRequestException, AlreadyTakenException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         assertEquals(user, memoryUserDAO.getUser(user.username())); // user stored properly
@@ -38,9 +37,9 @@ public class UserServiceTest {
     }
 
     @Test
-    void registerNegative() throws BadRequestException, AlreadyTakenException{
+    void registerNegative() throws BadRequestException, AlreadyTakenException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
-        AuthData authData = userService.register(user);
+        userService.register(user);
         var dupUser = new UserData("henryding", "1233", "hello@email.com");
         assertThrows(AlreadyTakenException.class, () -> userService.register(dupUser));
     }
@@ -68,16 +67,13 @@ public class UserServiceTest {
         String token = authData.authToken();
         userService.logout(token);
         assertNull(memoryAuthDAO.getAuth(token));
-
     }
 
     @Test
     void logoutNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
-        AuthData authData = userService.register(user);
+        userService.register(user);
         String badToken = "badtoken";
         assertThrows(UnauthorizedException.class, () -> userService.logout(badToken));
     }
-
-
 }

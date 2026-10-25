@@ -16,11 +16,10 @@ public class UserService {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
 
-    public UserService (UserDAO userDAO, AuthDAO authDAO) {
+    public UserService(UserDAO userDAO, AuthDAO authDAO) {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }
-
 
     public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException {
         if (user.username() == null || user.email() == null || user.password() == null) {
@@ -36,7 +35,6 @@ public class UserService {
         authDAO.createAuth(authData);
 
         return authData;
-
     }
 
     public AuthData login(UserData user) throws BadRequestException, UnauthorizedException {
@@ -52,21 +50,18 @@ public class UserService {
         authDAO.createAuth(authData);
 
         return authData;
-
     }
 
     public void logout(String token) throws UnauthorizedException {
         AuthData result = authDAO.getAuth(token);
-        if (result == null){
+        if (result == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         authDAO.deleteAuth(token);
     }
 
-
     private static String generateToken() {
         return UUID.randomUUID().toString();
     }
-
 }
 
