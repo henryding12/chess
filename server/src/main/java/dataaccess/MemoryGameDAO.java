@@ -3,10 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import model.GameData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO{
 
@@ -28,5 +25,38 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public List<GameData> listGames() {
         return new ArrayList<>(gameMap.values());
+    }
+
+    @Override
+    public GameData getGame(int gameID) {
+        return gameMap.get(gameID);
+    }
+
+    @Override
+    public void updateGame(int gameID, String username, String color) {
+        GameData gameData = gameMap.get(gameID);
+
+        if (Objects.equals(color, "WHITE")) {
+            GameData newGameInfo = new GameData(
+                    gameData.gameID(),
+                    username,
+                    gameData.blackUsername(),
+                    gameData.gameName(),
+                    gameData.game()
+            );
+            gameMap.put(gameID, newGameInfo);
+        } else {
+            GameData newGameInfo = new GameData(
+                    gameData.gameID(),
+                    gameData.whiteUsername(),
+                    username,
+                    gameData.gameName(),
+                    gameData.game()
+            );
+            gameMap.put(gameID, newGameInfo);
+        }
+
+        ;
+
     }
 }

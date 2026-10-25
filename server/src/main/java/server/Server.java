@@ -7,7 +7,9 @@ import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import kotlin.UIntKt;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import service.AdminService;
@@ -43,6 +45,7 @@ public class Server {
         javalin.delete("/session", this::logout);
         javalin.post("/game", this::createGame);
         javalin.get("/game", this::listGames);
+        javalin.put("/game", this::joinGame);
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
         javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
@@ -101,6 +104,22 @@ public class Server {
         ctx.status(200);
         ctx.result(new Gson().toJson(Map.of("games", listGameResult)));
 
+
+    }
+
+    private void joinGame(Context ctx) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+        String token = ctx.header("authorization");
+        Map gameInfo = new Gson().fromJson(ctx.body(), Map.class);
+        String playerColor = (String) gameInfo.get("playerColor");
+        Double gameIDasDouble = (Double) gameInfo.get("gameID");
+        if (gameIDasDouble != null) {
+            int gameID = gameIDasDouble.intValue();
+            gameService.joinGame(token, playerColor, gameID);
+        } else {
+            gameService.joinGame(token, playerColor, 0);
+        }
+        ctx.status(200);
+        ctx.result("{}");
 
     }
 
