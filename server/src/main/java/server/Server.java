@@ -44,6 +44,7 @@ public class Server {
         javalin.exception(BadRequestException.class, this::badRequestHandler);
         javalin.exception(AlreadyTakenException.class, this::alreadyTakenHandler);
         javalin.exception(UnauthorizedException.class, this::unauthorizedHandler);
+        javalin.exception(DataAccessException.class, this::dataAccessHandler);
     }
 
     public int run(int desiredPort) {
@@ -61,21 +62,21 @@ public class Server {
         ctx.result("{}");
     }
 
-    private void addUser(Context ctx) throws BadRequestException, AlreadyTakenException {
+    private void addUser(Context ctx) throws BadRequestException, AlreadyTakenException, DataAccessException {
         UserData user = new Gson().fromJson(ctx.body(), UserData.class);
         AuthData authData = userService.register(user);
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
     }
 
-    private void login(Context ctx) throws BadRequestException, UnauthorizedException {
+    private void login(Context ctx) throws BadRequestException, UnauthorizedException, DataAccessException {
         UserData user = new Gson().fromJson(ctx.body(), UserData.class);
         AuthData authData = userService.login(user);
         ctx.status(200);
         ctx.result(new Gson().toJson(authData));
     }
 
-    private void logout(Context ctx) throws UnauthorizedException {
+    private void logout(Context ctx) throws UnauthorizedException, DataAccessException {
         String token = ctx.header("authorization");
         userService.logout(token);
         ctx.status(200);
@@ -125,6 +126,11 @@ public class Server {
 
     private void unauthorizedHandler(UnauthorizedException ex, Context ctx) {
         ctx.status(401);
+        ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
+    }
+
+    private void dataAccessHandler(DataAccessException ex, Context ctx) {
+        ctx.status(500);
         ctx.result(new Gson().toJson(Map.of("message", ex.getMessage())));
     }
 }

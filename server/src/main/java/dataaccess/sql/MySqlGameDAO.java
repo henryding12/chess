@@ -1,11 +1,12 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
+import dataaccess.GameDAO;
 import model.GameData;
 
 import java.util.List;
 
-public class MySqlGameDAO implements GameDAO{
+public class MySqlGameDAO implements GameDAO {
     @Override
     public void clear() {
 

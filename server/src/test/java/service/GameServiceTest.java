@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -27,7 +28,7 @@ public class GameServiceTest {
     private String token;
 
     @BeforeEach
-    void clear() throws BadRequestException, AlreadyTakenException {
+    void clear() throws BadRequestException, AlreadyTakenException, DataAccessException {
         adminService.clear();
         UserData user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);

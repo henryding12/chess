@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -10,6 +11,8 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import javax.xml.crypto.Data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,7 +31,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void registerPositive() throws BadRequestException, AlreadyTakenException {
+    void registerPositive() throws BadRequestException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         assertEquals(user, memoryUserDAO.getUser(user.username())); // user stored properly
@@ -37,7 +40,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void registerNegative() throws BadRequestException, AlreadyTakenException {
+    void registerNegative() throws BadRequestException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         userService.register(user);
         var dupUser = new UserData("henryding", "1233", "hello@email.com");
@@ -45,7 +48,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loginPositive() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+    void loginPositive() throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         userService.register(user);
         AuthData authData = userService.login(user);
@@ -53,7 +56,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void loginNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+    void loginNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         userService.register(user);
         UserData loginUser = new UserData("henryding", "badpassword", "henryding@email.com");
@@ -61,7 +64,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void logoutPositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    void logoutPositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         String token = authData.authToken();
@@ -70,7 +73,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void logoutNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException {
+    void logoutNegative() throws BadRequestException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         userService.register(user);
         String badToken = "badtoken";

@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
@@ -28,7 +29,7 @@ public class AdminServiceTest {
     }
 
     @Test
-    void clearAll() throws BadRequestException, AlreadyTakenException {
+    void clearAll() throws BadRequestException, AlreadyTakenException, DataAccessException {
         var user = new UserData("henryding", "1234", "henryding@email.com");
         AuthData authData = userService.register(user);
         assertEquals(user, memoryUserDAO.getUser(user.username()));

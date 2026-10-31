@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import exceptions.AlreadyTakenException;
@@ -21,7 +22,7 @@ public class UserService {
         this.authDAO = authDAO;
     }
 
-    public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException {
+    public AuthData register(UserData user) throws BadRequestException, AlreadyTakenException, DataAccessException {
         if (user.username() == null || user.email() == null || user.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -37,7 +38,7 @@ public class UserService {
         return authData;
     }
 
-    public AuthData login(UserData user) throws BadRequestException, UnauthorizedException {
+    public AuthData login(UserData user) throws BadRequestException, UnauthorizedException, DataAccessException {
         if (user.username() == null || user.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
@@ -52,7 +53,7 @@ public class UserService {
         return authData;
     }
 
-    public void logout(String token) throws UnauthorizedException {
+    public void logout(String token) throws UnauthorizedException, DataAccessException {
         AuthData result = authDAO.getAuth(token);
         if (result == null) {
             throw new UnauthorizedException("Error: unauthorized");

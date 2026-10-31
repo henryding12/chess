@@ -1,8 +1,9 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.AuthDAO;
 import model.AuthData;
 
-public class MySqlAuthDAO implements AuthDAO{
+public class MySqlAuthDAO implements AuthDAO {
     @Override
     public void clear() {
 
