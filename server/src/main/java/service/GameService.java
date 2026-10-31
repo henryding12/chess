@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
@@ -21,7 +22,7 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public int createGame(String token, String gameName) throws UnauthorizedException, BadRequestException {
+    public int createGame(String token, String gameName) throws UnauthorizedException, BadRequestException, DataAccessException {
         AuthData result = authDao.getAuth(token);
         if (result == null) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -32,7 +33,7 @@ public class GameService {
         return gameDAO.addGame(gameName, game);
     }
 
-    public List listGames(String token) throws UnauthorizedException {
+    public List listGames(String token) throws UnauthorizedException, DataAccessException {
         AuthData result = authDao.getAuth(token);
         if (result == null) {
             throw new UnauthorizedException("Error: unauthorized");
@@ -40,7 +41,7 @@ public class GameService {
         return gameDAO.listGames();
     }
 
-    public void joinGame(String token, String playerColor, int gameID) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public void joinGame(String token, String playerColor, int gameID) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         AuthData getAuthResult = authDao.getAuth(token);
         if (getAuthResult == null) {
             throw new UnauthorizedException("Error: unauthorized");

@@ -36,7 +36,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void createGamePositive() throws UnauthorizedException, BadRequestException {
+    void createGamePositive() throws UnauthorizedException, BadRequestException, DataAccessException {
         int gameID = gameService.createGame(token, "testGame");
         GameData game = memoryGameDAO.getGame(gameID);
         assertEquals("testGame", game.gameName());
@@ -55,7 +55,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void listGamesPositive() throws UnauthorizedException, BadRequestException {
+    void listGamesPositive() throws UnauthorizedException, BadRequestException, DataAccessException {
         gameService.createGame(token, "Game 1");
         gameService.createGame(token, "Game 2");
         var games = gameService.listGames(token);
@@ -63,7 +63,7 @@ public class GameServiceTest {
     }
 
     @Test
-    void listGamesNegative() throws UnauthorizedException, BadRequestException {
+    void listGamesNegative() throws UnauthorizedException, BadRequestException, DataAccessException {
         gameService.createGame(token, "Game 1");
         gameService.createGame(token, "Game 2");
         String faultyToken = "badToken";
@@ -71,14 +71,14 @@ public class GameServiceTest {
     }
 
     @Test
-    void joinGamePositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    void joinGamePositive() throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         int gameID = gameService.createGame(token, "Game 1");
         gameService.joinGame(token, "BLACK", gameID);
         assertEquals(memoryGameDAO.getGame(gameID).blackUsername(), memoryAuthDAO.getAuth(token).username());
     }
 
     @Test
-    void joinGameNegative() throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    void joinGameNegative() throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         int gameID = gameService.createGame(token, "Game 1");
         gameService.joinGame(token, "BLACK", gameID);
         assertThrows(AlreadyTakenException.class, () -> gameService.joinGame(token, "BLACK", gameID));

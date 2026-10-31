@@ -83,7 +83,7 @@ public class Server {
         ctx.result("{}");
     }
 
-    private void createGame(Context ctx) throws BadRequestException, UnauthorizedException {
+    private void createGame(Context ctx) throws BadRequestException, UnauthorizedException, DataAccessException {
         String token = ctx.header("authorization");
         Map body = new Gson().fromJson(ctx.body(), Map.class);
         String gameName = (String) body.get("gameName");
@@ -92,14 +92,14 @@ public class Server {
         ctx.result(new Gson().toJson(Map.of("gameID", createGameResult)));
     }
 
-    private void listGames(Context ctx) throws UnauthorizedException {
+    private void listGames(Context ctx) throws UnauthorizedException, DataAccessException {
         String token = ctx.header("authorization");
         List listGameResult = gameService.listGames(token);
         ctx.status(200);
         ctx.result(new Gson().toJson(Map.of("games", listGameResult)));
     }
 
-    private void joinGame(Context ctx) throws UnauthorizedException, BadRequestException, AlreadyTakenException {
+    private void joinGame(Context ctx) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
         String token = ctx.header("authorization");
         Map gameInfo = new Gson().fromJson(ctx.body(), Map.class);
         String playerColor = (String) gameInfo.get("playerColor");
