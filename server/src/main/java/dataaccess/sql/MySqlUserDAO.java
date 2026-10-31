@@ -12,6 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+import static java.sql.Types.NULL;
+
 public class MySqlUserDAO implements UserDAO {
 
     public MySqlUserDAO() throws DataAccessException{
@@ -42,10 +45,15 @@ public class MySqlUserDAO implements UserDAO {
     }
 
 
+
     @Override
-    public void createUser(UserData user) {
+    public void createUser(UserData user) throws DataAccessException{
+        var statement = "INSERT INTO userdata (username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, user.username(), user.password(), user.email());
+
 
     }
+
 
 
     private UserData readUser(ResultSet rs) throws SQLException {
@@ -53,6 +61,29 @@ public class MySqlUserDAO implements UserDAO {
         var password = rs.getString("password");
         var email = rs.getString("email");
         return new UserData(username, password, email);
+    }
+
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                for (int i = 0; i < params.length; i++) {
+                    Object param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param == null) ps.setNull(i + 1, NULL);
+                }
+                ps.executeUpdate();
+
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+
+                return 0;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("error: failed to execute update", e);
+        }
     }
 
     private final String[] createStatements = {
