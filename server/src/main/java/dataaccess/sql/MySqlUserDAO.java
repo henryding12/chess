@@ -1,27 +1,58 @@
 package dataaccess.sql;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import model.UserData;
 
+import javax.xml.crypto.Data;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class MySqlUserDAO implements UserDAO {
+
+    public MySqlUserDAO() throws DataAccessException{
+        configureDatabase();
+    }
+
     @Override
     public void clear() {
 
     }
 
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException{
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username, password, email FROM userdata where username=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()){
+                        return readUser(rs);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: unable to read user", e);
+        }
         return null;
     }
+
 
     @Override
     public void createUser(UserData user) {
 
+    }
+
+
+    private UserData readUser(ResultSet rs) throws SQLException {
+        var username = rs.getString("username");
+        var password = rs.getString("password");
+        var email = rs.getString("email");
+        return new UserData(username, password, email);
     }
 
     private final String[] createStatements = {
