@@ -1,12 +1,10 @@
 package dataaccess.sql;
 
-import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.DatabaseManager;
 import dataaccess.UserDAO;
 import model.UserData;
 
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,9 +20,11 @@ public class MySqlUserDAO implements UserDAO {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException{
+        var statement = "TRUNCATE userdata";
+        executeUpdate(statement);
     }
+
 
     @Override
     public UserData getUser(String username) throws DataAccessException{
@@ -50,7 +50,6 @@ public class MySqlUserDAO implements UserDAO {
     public void createUser(UserData user) throws DataAccessException{
         var statement = "INSERT INTO userdata (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, user.username(), user.password(), user.email());
-
 
     }
 
