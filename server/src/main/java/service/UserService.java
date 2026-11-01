@@ -9,6 +9,7 @@ import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -30,7 +31,10 @@ public class UserService {
         if (result != null) {
             throw new AlreadyTakenException("Error: already taken");
         }
-        userDAO.createUser(user);
+        // store encrypted password
+        String hash = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        userDAO.createUser(new UserData(user.username(), hash, user.email()));
+
         String token = generateToken();
         AuthData authData = new AuthData(user.username(), token);
         authDAO.createAuth(authData);
@@ -43,7 +47,8 @@ public class UserService {
             throw new BadRequestException("Error: bad request");
         }
         var result = userDAO.getUser(user.username());
-        if (result == null || !Objects.equals(result.password(), user.password())) {
+        // check encrypted password
+        if (result == null || !BCrypt.checkpw(user.password(), result.password())) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         String token = generateToken();
