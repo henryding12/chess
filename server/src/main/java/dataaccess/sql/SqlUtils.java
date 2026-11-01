@@ -45,7 +45,7 @@ public class SqlUtils {
                 return 0;
             }
         } catch (SQLException e) {
-            throw new DataAccessException("error: failed to execute update", e);
+            throw new DataAccessException("Error: failed to execute update", e);
         }
     }
 

@@ -2,6 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.sql.MySqlAuthDAO;
+import dataaccess.sql.MySqlGameDAO;
+import dataaccess.sql.MySqlUserDAO;
 import exceptions.AlreadyTakenException;
 import exceptions.BadRequestException;
 import exceptions.UnauthorizedException;
@@ -24,13 +27,18 @@ public class Server {
     private final GameService gameService;
 
     public Server() {
-        this(new MemoryUserDAO(), new MemoryGameDAO(), new MemoryAuthDAO());
-    }
+        try{
+            UserDAO userDAO = new MySqlUserDAO();
+            AuthDAO authDAO = new MySqlAuthDAO();
+            GameDAO gameDAO = new MySqlGameDAO();
 
-    public Server(UserDAO userDAO, GameDAO gameDAO, AuthDAO authDAO) {
-        adminService = new AdminService(userDAO, gameDAO, authDAO);
-        userService = new UserService(userDAO, authDAO);
-        gameService = new GameService(authDAO, gameDAO);
+            adminService = new AdminService(userDAO, gameDAO, authDAO);
+            userService = new UserService(userDAO, authDAO);
+            gameService = new GameService(authDAO, gameDAO);
+
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error: unable to initialize the database", e);
+        }
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
