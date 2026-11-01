@@ -185,21 +185,18 @@ public class ChessGame {
             for (int c = 1; c <= 8; c++) {
                 position = new ChessPosition(r, c);
                 piece = board.getPiece(position);
-                if (piece != null) {
-                    positionColor = piece.getTeamColor();
 
-                    // identify if enemy
-                    if (positionColor == enemyColor) {
-                        // does the enemy attack the king square?
-                        enemyMoves = piece.pieceMoves(board, position);
-                        for (ChessMove move : enemyMoves) {
-                            if (move.getEndPosition().equals(kingPosition)) {
-                                return true;
-                            }
-                        }
-                    }
+                // skip empty squares and friendly pieces
+                if (piece == null || piece.getTeamColor() != enemyColor) {
+                    continue;
                 }
 
+                // does the enemy attach the king square?
+                for (ChessMove move : piece.pieceMoves(board, position)) {
+                    if (move.getEndPosition().equals(kingPosition)){
+                        return true;
+                    }
+                }
             }
         }
         return false;
