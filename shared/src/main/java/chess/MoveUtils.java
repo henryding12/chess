@@ -8,11 +8,8 @@ import static java.lang.Math.abs;
 public class MoveUtils {
     public static Collection<ChessMove> slide (ChessBoard board, ChessPosition myPosition, int[][] movement, int steps){
         Collection<ChessMove> moves = new ArrayList<>();
-
-
         for (int[] direction: movement) {
             int count = 0;
-
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
 
@@ -20,7 +17,6 @@ public class MoveUtils {
                 // movement
                 row = row + direction[0];
                 col = col + direction[1];
-
                 // check if in bounds
                 if (row < 1 || row > 8 || col < 1 || col > 8) {
                     // not in bounds so exit loop
@@ -45,27 +41,19 @@ public class MoveUtils {
                 }
                 count++;
             }
-
         }
-
         return moves;
     }
 
     public static Collection<ChessMove> pawn (ChessBoard board, ChessPosition myPosition, int[][] movement, int steps){
         Collection<ChessMove> moves = new ArrayList<>();
-
-
         for (int[] direction: movement) {
             int count = 0;
-
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
-
             while (count < steps) {
                 // color of the piece being moved
                 ChessGame.TeamColor myColor = board.getPiece(myPosition).getTeamColor();
-
-
                 // movement
                 if (myColor == ChessGame.TeamColor.WHITE && direction[0] < 0) {
                     // white can only move forward
@@ -83,8 +71,6 @@ public class MoveUtils {
                     // not in bounds so exit loop
                     break;
                 }
-
-
                 // if move two, on starting row?
                 int moveDistance = abs(row - myPosition.getRow());
                 if (moveDistance == 2 && (myPosition.getRow() != 2 && myPosition.getRow() != 7)) {
@@ -103,43 +89,20 @@ public class MoveUtils {
                     }
 
                 }
-
-
                 // check if a piece already exists
                 ChessPosition newPosition = new ChessPosition(row, col);
-                ChessMove newMove = new ChessMove(myPosition, newPosition, null);
+                boolean promotes = ((myColor == ChessGame.TeamColor.WHITE && row == 8) || (myColor == ChessGame.TeamColor.BLACK && row == 1));
 
                 // only can move laterally if a piece exists to attack
                 if (direction[1] != 0 && board.getPiece(newPosition) == null) {
                     break;
                 }
-
                 if (board.getPiece(newPosition) == null) {
-                    if ((myColor == ChessGame.TeamColor.WHITE && row == 8) || (myColor == ChessGame.TeamColor.BLACK && row == 1)) {
-                        // if promotion then reflect promotion
-                        moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP));
-                    } else {
-                        moves.add(newMove);
-                    }
+                    addPawnMoves(moves, myPosition, newPosition, promotes);
                 } else {
-                    ChessGame.TeamColor color = board.getPiece(newPosition).getTeamColor();
-
                     // check if there is an Enemy Piece to capture, pawn can only capture diagonal
-                    if (color != myColor && direction[1] != 0) {
-                        if ((myColor == ChessGame.TeamColor.WHITE && row == 8) || (myColor == ChessGame.TeamColor.BLACK && row == 1)) {
-                            // if promotion then reflect promotion
-                            moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN));
-                            moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT));
-                            moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK));
-                            moves.add(new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP));
-                        } else {
-                            moves.add(newMove);
-                            break;
-                        }
-
+                    if (board.getPiece(newPosition).getTeamColor() != myColor && direction[1] != 0) {
+                        addPawnMoves(moves, myPosition, newPosition, promotes);
                     } else {
                         // friendly piece so don't do anything since you are blocked
                         break;
@@ -147,11 +110,18 @@ public class MoveUtils {
                 }
                 count++;
             }
-
         }
-
         return moves;
     }
 
-
+    private static void addPawnMoves(Collection<ChessMove> moves, ChessPosition start, ChessPosition end, boolean promotes) {
+        if (promotes) {
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.QUEEN));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.KNIGHT));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.ROOK));
+            moves.add(new ChessMove(start, end, ChessPiece.PieceType.BISHOP));
+        } else {
+            moves.add(new ChessMove(start, end, null));
+        }
+    }
 }
