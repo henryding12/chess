@@ -41,15 +41,19 @@ public class GameService {
         return gameDAO.listGames();
     }
 
-    public void joinGame(String token, String playerColor, int gameID) throws UnauthorizedException, BadRequestException, AlreadyTakenException, DataAccessException {
+    public void joinGame(String token, String playerColor, int gameID)
+            throws UnauthorizedException, BadRequestException, AlreadyTakenException,
+    DataAccessException {
         AuthData getAuthResult = authDao.getAuth(token);
         if (getAuthResult == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         GameData getGameResult = gameDAO.getGame(gameID);
-        if ((!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK")) || getGameResult == null || gameID == 0) {
+        if ((!Objects.equals(playerColor, "WHITE") && !Objects.equals(playerColor, "BLACK"))
+                || getGameResult == null || gameID == 0) {
             throw new BadRequestException("Error: bad request");
-        } else if ((playerColor.equals("WHITE") && getGameResult.whiteUsername() != null) || (playerColor.equals("BLACK") & getGameResult.blackUsername() != null)) {
+        } else if ((playerColor.equals("WHITE") && getGameResult.whiteUsername() != null)
+                || (playerColor.equals("BLACK") & getGameResult.blackUsername() != null)) {
             throw new AlreadyTakenException("Error: already taken");
         }
 
