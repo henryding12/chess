@@ -1,26 +1,30 @@
 package client;
 
+import ui.Repl;
+
 import java.util.Arrays;
 
 public class ChessClient {
 
-    public ChessClient(String serverUrl, Repl replObject) {
+    private final String serverUrl;
+    private State state;
 
+    public ChessClient(String serverUrl) {
+        this.serverUrl = serverUrl;
+        state = State.SIGNEDOUT;
     }
 
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    - signIn <yourname>
+                    - register <username> <password> <email>
+                    - login <username> <password>
                     - quit
                     """;
         }
         return """
                 - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
+                - logout
                 - quit
                 """;
     }
@@ -30,19 +34,47 @@ public class ChessClient {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "signin" -> signIn(params);
-                case "rescue" -> rescuePet(params);
-                case "list" -> listPets();
-                case "signout" -> signOut();
-                case "adopt" -> adoptPet(params);
-                case "adoptall" -> adoptAllPets();
-                case "quit" -> "quit";
-                default -> help();
-            };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
+            if (state == State.SIGNEDOUT) {
+                return preLoginHandler(tokens, cmd, params);
+            } else if (state == State.SIGNEDIN) {
+                return postLoginHandler(tokens, cmd, params);
+            }
+        } catch (Exception e) {
+            return e.toString();
         }
+        return "Bad";
+    }
+
+    private String preLoginHandler(String[] tokens,String cmd, String[] params){
+        return switch(cmd) {
+            case "register" -> register(params);
+            case "login" -> login(params);
+            case "quit" -> "quit";
+            default -> help();
+        };
+    }
+
+    private String postLoginHandler(String[] tokens, String cmd, String[] params){
+        return switch(cmd) {
+            case "logout" -> logout(params);
+            case "quit" -> "quit";
+            default -> help();
+        };
+    }
+
+    private String register(String[] params) {
+        state = State.SIGNEDIN;
+        return "Signed in!";
+    }
+
+    private String login(String[] params) {
+        state = State.SIGNEDIN;
+        return "Signing In!";
+    }
+
+    private String logout(String [] params) {
+        state = State.SIGNEDOUT;
+        return "Logging Out!";
     }
 
 }
