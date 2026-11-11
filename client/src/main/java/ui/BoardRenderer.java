@@ -5,7 +5,6 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 
-import javax.swing.text.Position;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 
@@ -28,55 +27,67 @@ public class BoardRenderer {
 
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
+        draw(out, teamColor);
     }
 
-    private void drawHeaders(PrintStream out) {
+    private void draw(PrintStream out, ChessGame.TeamColor teamColor) {
 
 
-//        String[] headers = { "TIC", "TAC", "TOE" };
-//        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-//            drawHeader(out, headers[boardCol]);
-//
-//            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-//                out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
-//            }
-//        }
-        drawHeader(out);
+        drawHeader(out, teamColor);
         newLine(out);
-        drawBoard(out); // ends on the newline
-        drawHeader(out);
-//        out.println();
+        drawBoard(out, teamColor); // ends on the newline
+        drawHeader(out, teamColor);
+        newLine(out);
+
     }
 
-    private void drawHeader(PrintStream out) {
-//        int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-//        int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
+    private void drawHeader(PrintStream out, ChessGame.TeamColor teamColor) {
 
-        char startingText = 'a';
+        char startingText;
+        int direction;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            startingText = 'a';
+            direction = 1;
+        } else {
+            startingText = 'h';
+            direction = -1;
+        }
+
 
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(EMPTY);
         for (int i = 0; i < 8; i++){
             out.print(' ');
-            out.print((char)(startingText+i));
+            out.print((char)(startingText+i*direction));
             out.print(' ');
         }
         out.print(EMPTY);
-//        out.print("a");
-//        out.print(EMPTY);
-//        printHeaderText(out, headerText);
-//        out.print(EMPTY.repeat(suffixLength));
     }
 
-    private void drawBoard (PrintStream out) {
+    private void drawBoard (PrintStream out, ChessGame.TeamColor teamColor) {
         int color = 0;
+        int startingRowNumber;
+        int startingColNumber;
+        int directionRow;
+        int directionCol;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            startingRowNumber = 8;
+            startingColNumber = 0;
+            directionRow = -1;
+            directionCol = 1;
+        } else {
+            startingRowNumber = 1;
+            startingColNumber = 9;
+            directionRow = 1;
+            directionCol = -1;
+        }
+
         for (int r = 0; r < 8; r++){
-            for (int c = 0; c < 10; c++){
+            for (int c = 0; c < 10; c++) {
                 if (c == 0 || c == 9) {
                     out.print(SET_BG_COLOR_LIGHT_GREY);
                     out.print(' ');
-                    out.print(8-r);
+                    out.print(startingRowNumber + r*directionRow); // header
                     out.print(' ');
                     if (c == 9) {
                         newLine(out);
@@ -89,7 +100,7 @@ public class BoardRenderer {
                         out.print(SET_BG_COLOR_BLACK);
                     }
                     out.print(' ');
-                    printPiece(8 - r,c,out);
+                    printPiece(startingRowNumber + r*directionRow, startingColNumber + c*directionCol, out);
                     out.print(' ');
                     color++;
                 }
@@ -133,8 +144,10 @@ public class BoardRenderer {
             }
         }
 
+        out.print(SET_TEXT_BOLD);
         out.print(symbol);
         out.print(RESET_TEXT_COLOR);
+        out.print(RESET_TEXT_BOLD_FAINT);
 
     }
 }
