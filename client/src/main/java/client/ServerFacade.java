@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import model.AuthData;
@@ -60,6 +61,13 @@ public class ServerFacade {
         var request = buildRequest("GET", "/game", null, authData);
         var response = sendRequest(request);
         return handleResponse(response, Map.class);
+    }
+
+    public String joinGame(String gameId, String color, AuthData authData) throws Exception {
+        var request = buildRequest("PUT", "/game", Map.of("gameID", gameId, "playerColor", color), authData);
+        var response = sendRequest(request);
+        handleResponse(response, null);
+        return response.body();
     }
 
 //    public void deletePet(int id) throws ResponseException {

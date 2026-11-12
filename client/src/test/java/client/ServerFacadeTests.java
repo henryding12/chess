@@ -60,6 +60,7 @@ public class ServerFacadeTests {
         assertEquals(expected, gameInfo);
     }
 
+    // fix listGames output potentially
     @Test
     void listGames() throws Exception {
         Map listOfGames = facade.listGames(player1Auth);
@@ -67,7 +68,13 @@ public class ServerFacadeTests {
         assertEquals(expected, listOfGames);
     }
 
-    
+    @Test
+    void joinGame() throws Exception {
+        Map gameInfo = facade.createGame("game1", player1Auth);
+        String gameID = gameInfo.get("gameID").toString();
+        String result = facade.joinGame(gameID, "WHITE", player1Auth);
+        assertEquals("{}", result);
+    }
 
     @Test
     public void sampleTest() {

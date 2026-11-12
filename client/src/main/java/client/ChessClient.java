@@ -66,6 +66,7 @@ public class ChessClient {
         return switch(cmd) {
             case "list" -> listGames();
             case "create" -> create(params);
+            case "join" -> joinGame(params);
             case "logout" -> logout(params);
             case "quit" -> "quit";
             default -> help();
@@ -99,6 +100,11 @@ public class ChessClient {
         state = State.SIGNEDIN;
         Map listOfGames = serverFacade.listGames(authData);
         return listOfGames.toString();
+    }
+
+    private String joinGame(String[] params) throws Exception{
+        state = State.SIGNEDIN;
+        return serverFacade.joinGame(params[0], params[1], authData);
     }
 
 }
