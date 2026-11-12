@@ -5,34 +5,38 @@ import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
     private static ServerFacade facade;
+    private static AuthData player1Auth;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws Exception {
         server = new Server();
         String serverUrl = "http://localhost:8080";
         var port = server.run(8080);
         System.out.println("Started test HTTP server on " + port);
 
         facade = new ServerFacade(serverUrl);
+        facade.clear();
+        player1Auth = facade.register(new UserData("player1", "password", "p1@email.com"));
     }
 
     @AfterAll
-    static void stopServer() {
+    static void stopServer()  {
         server.stop();
     }
 
     @Test
     void register() throws Exception {
-        var authData = facade.register(new UserData("player1", "password", "p1@email.com"));
-        assertTrue(authData.authToken().length() > 10);
+        assertTrue(player1Auth.authToken().length() > 10);
     }
 
     @Test
@@ -47,6 +51,23 @@ public class ServerFacadeTests {
         String message = facade.logout(authData);
         assertEquals("{}", message);
     }
+
+
+    @Test
+    void createGame() throws Exception {
+        Map gameInfo = facade.createGame("game1", player1Auth);
+        var expected = Map.of("gameID", 1.0);
+        assertEquals(expected, gameInfo);
+    }
+
+    @Test
+    void listGames() throws Exception {
+        Map listOfGames = facade.listGames(player1Auth);
+        var expected = Map.of("games", List.of());
+        assertEquals(expected, listOfGames);
+    }
+
+    
 
     @Test
     public void sampleTest() {

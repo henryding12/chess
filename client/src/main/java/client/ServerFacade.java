@@ -9,6 +9,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.Map;
 
 public class ServerFacade {
 
@@ -45,7 +47,19 @@ public class ServerFacade {
         var response = sendRequest(request);
         handleResponse(response, null);
         return response.body();
+    }
 
+    public Map createGame(String gameName, AuthData authData) throws Exception {
+        var request = buildRequest("POST", "/game", Map.of("gameName", gameName), authData);
+        var response = sendRequest(request);
+        return handleResponse(response, Map.class);
+
+    }
+
+    public Map listGames(AuthData authData) throws Exception {
+        var request = buildRequest("GET", "/game", null, authData);
+        var response = sendRequest(request);
+        return handleResponse(response, Map.class);
     }
 
 //    public void deletePet(int id) throws ResponseException {

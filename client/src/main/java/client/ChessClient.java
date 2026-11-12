@@ -1,15 +1,18 @@
 package client;
 
+import model.AuthData;
 import model.UserData;
 import ui.Repl;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class ChessClient {
 
     private final String serverUrl;
     private State state;
     private ServerFacade serverFacade;
+    private AuthData authData;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -27,8 +30,8 @@ public class ChessClient {
         }
         return """
                 - list
-                - create <game name>
-                - join <
+                - create <gameName>
+                - join <gameID, color>
                 - logout
                 - quit
                 """;
@@ -59,8 +62,9 @@ public class ChessClient {
         };
     }
 
-    private String postLoginHandler(String[] tokens, String cmd, String[] params){
+    private String postLoginHandler(String[] tokens, String cmd, String[] params) throws Exception {
         return switch(cmd) {
+            case "list" -> listGames();
             case "create" -> create(params);
             case "logout" -> logout(params);
             case "quit" -> "quit";
@@ -70,19 +74,31 @@ public class ChessClient {
 
     private String register(String[] params) throws Exception {
         state = State.SIGNEDIN;
-        serverFacade.register(new UserData(params[0], params[1], params[2]));
+        authData = serverFacade.register(new UserData(params[0], params[1], params[2]));
         return "Signed in!";
     }
 
     private String login(String[] params) throws Exception {
         state = State.SIGNEDIN;
-        serverFacade.login(new UserData(params[0], params[1], null));
+        authData = serverFacade.login(new UserData(params[0], params[1], null));
         return "Signing In!";
     }
 
     private String logout(String [] params) {
         state = State.SIGNEDOUT;
         return "Logging Out!";
+    }
+
+    private String create(String[] params) throws Exception{
+        state = State.SIGNEDIN;
+        serverFacade.createGame(params[0], authData);
+        return "Created Game " + params[0];
+    }
+
+    private String listGames() throws Exception {
+        state = State.SIGNEDIN;
+        Map listOfGames = serverFacade.listGames(authData);
+        return listOfGames.toString();
     }
 
 }
