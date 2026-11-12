@@ -1,5 +1,6 @@
 package client;
 
+import model.UserData;
 import ui.Repl;
 
 import java.util.Arrays;
@@ -8,9 +9,11 @@ public class ChessClient {
 
     private final String serverUrl;
     private State state;
+    private ServerFacade serverFacade;
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
+        serverFacade = new ServerFacade(serverUrl);
         state = State.SIGNEDOUT;
     }
 
@@ -24,6 +27,8 @@ public class ChessClient {
         }
         return """
                 - list
+                - create <game name>
+                - join <
                 - logout
                 - quit
                 """;
@@ -45,7 +50,7 @@ public class ChessClient {
         return "Bad";
     }
 
-    private String preLoginHandler(String[] tokens,String cmd, String[] params){
+    private String preLoginHandler(String[] tokens,String cmd, String[] params) throws Exception {
         return switch(cmd) {
             case "register" -> register(params);
             case "login" -> login(params);
@@ -56,19 +61,22 @@ public class ChessClient {
 
     private String postLoginHandler(String[] tokens, String cmd, String[] params){
         return switch(cmd) {
+            case "create" -> create(params);
             case "logout" -> logout(params);
             case "quit" -> "quit";
             default -> help();
         };
     }
 
-    private String register(String[] params) {
+    private String register(String[] params) throws Exception {
         state = State.SIGNEDIN;
+        serverFacade.register(new UserData(params[0], params[1], params[2]));
         return "Signed in!";
     }
 
-    private String login(String[] params) {
+    private String login(String[] params) throws Exception {
         state = State.SIGNEDIN;
+        serverFacade.login(new UserData(params[0], params[1], null));
         return "Signing In!";
     }
 
