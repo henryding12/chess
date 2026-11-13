@@ -22,7 +22,10 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    // throw exceptions later better
+    public ServerFacade(int port) {
+        this("http://localhost:" + port);
+    }
+
     public AuthData register(UserData user) throws Exception {
         var request = buildRequest("POST", "/user", user, null);
         var response = sendRequest(request);
@@ -70,24 +73,6 @@ public class ServerFacade {
         return response.body();
     }
 
-//    public void deletePet(int id) throws ResponseException {
-//        var path = String.format("/pet/%s", id);
-//        var request = buildRequest("DELETE", path, null);
-//        var response = sendRequest(request);
-//        handleResponse(response, null);
-//    }
-
-//    public void deleteAllPets() throws ResponseException {
-//        var request = buildRequest("DELETE", "/pet", null);
-//        sendRequest(request);
-//    }
-
-//    public PetList listPets() throws ResponseException {
-//        var request = buildRequest("GET", "/pet", null);
-//        var response = sendRequest(request);
-//        return handleResponse(response, PetList.class);
-//    }
-
     private HttpRequest buildRequest(String method, String path, Object body, AuthData auth) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
@@ -119,12 +104,7 @@ public class ServerFacade {
     private <T> T handleResponse(HttpResponse<String> response, Class<T> responseClass) throws Exception {
         var status = response.statusCode();
         if (!isSuccessful(status)) {
-            var body = response.body();
-            if (body != null) {
-                throw new Exception(body + status);
-            }
-
-//            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+            throw new ResponseException(status);
         }
 
         if (responseClass != null) {

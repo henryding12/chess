@@ -1,7 +1,7 @@
 package ui;
 
 import client.ChessClient;
-import client.State;
+import client.ResponseException;
 
 import java.util.Scanner;
 
@@ -28,9 +28,8 @@ public class Repl {
             try {
                 result = client.eval(line);
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+            } catch (Exception e) {
+                System.out.println("Something went wrong. Please try again.");
             }
         }
         System.out.println();

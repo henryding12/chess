@@ -21,13 +21,15 @@ public class ServerFacadeTests {
     private static AuthData player1Auth;
 
     @BeforeAll
-    public static void init() throws Exception {
+    public static void init() {
         server = new Server();
-        String serverUrl = "http://localhost:8080";
-        var port = server.run(8080);
-        System.out.println("Started test HTTP server on " + port);
+        var port = server.run(0);
+        System.out.println("started testing on http server " + port);
+        facade = new ServerFacade(port);
+    }
 
-        facade = new ServerFacade(serverUrl);
+    @BeforeEach
+    void setup() throws Exception {
         facade.clear();
         player1Auth = facade.register(new UserData("player1", "password", "p1@email.com"));
     }
