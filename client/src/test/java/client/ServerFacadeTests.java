@@ -19,6 +19,7 @@ public class ServerFacadeTests {
     private static Server server;
     private static ServerFacade facade;
     private static AuthData player1Auth;
+    private static final AuthData faulty = new AuthData("player1", "faultyToken");
 
     @BeforeAll
     public static void init() {
@@ -85,8 +86,38 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void sampleTest() {
-        assertTrue(true);
+    void registerAgain() {
+        assertThrows(ResponseException.class,
+                () -> facade.register(new UserData("player1", "password", "p1@email.com")));
+    }
+
+    @Test
+    void wrongPassword() {
+        assertThrows(ResponseException.class,
+                () -> facade.login(new UserData("player1", "wrong", null)));
+    }
+
+    @Test
+    void logoutBadAuth() {
+        assertThrows(ResponseException.class, () -> facade.logout(faulty));
+    }
+
+    @Test
+    void createGameFaultyAuth() {
+        assertThrows(ResponseException.class, () -> facade.createGame("game1", faulty));
+    }
+
+    @Test
+    void listGamesFaultyAuth() {
+        assertThrows(ResponseException.class, () -> facade.listGames(faulty));
+    }
+
+    @Test
+    void joinGameWrongColor() throws Exception {
+        Map gameInfo = facade.createGame("game1", player1Auth);
+        int gameID = ((Double) gameInfo.get("gameID")).intValue();
+        facade.joinGame(gameID, "WHITE", player1Auth);
+        assertThrows(ResponseException.class, () -> facade.joinGame(gameID, "WHITE", player1Auth));
     }
 
 }
