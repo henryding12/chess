@@ -1,10 +1,13 @@
 package client;
 
+import chess.ChessGame;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,9 +66,12 @@ public class ServerFacadeTests {
     // fix listGames output potentially
     @Test
     void listGames() throws Exception {
-        Map listOfGames = facade.listGames(player1Auth);
-        var expected = Map.of("games", List.of());
-        assertEquals(expected, listOfGames);
+        Map gameInfo = facade.createGame("game1", player1Auth);
+        ListGamesResult listOfGames = facade.listGames(player1Auth);
+        var expectedList = new ArrayList<GameData>();
+        var game = new GameData(1,null, null, "game1", new ChessGame());
+        expectedList.add(game);
+        assertEquals(expectedList, listOfGames.games());
     }
 
     @Test

@@ -57,10 +57,10 @@ public class ServerFacade {
 
     }
 
-    public Map listGames(AuthData authData) throws Exception {
+    public ListGamesResult listGames(AuthData authData) throws Exception {
         var request = buildRequest("GET", "/game", null, authData);
         var response = sendRequest(request);
-        return handleResponse(response, Map.class);
+        return handleResponse(response, ListGamesResult.class);
     }
 
     public String joinGame(int gameId, String color, AuthData authData) throws Exception {

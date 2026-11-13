@@ -1,10 +1,12 @@
 package client;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import ui.Repl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class ChessClient {
@@ -13,6 +15,7 @@ public class ChessClient {
     private State state;
     private ServerFacade serverFacade;
     private AuthData authData;
+    private List<GameData> gameList = List.of();
 
     public ChessClient(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -98,8 +101,32 @@ public class ChessClient {
 
     private String listGames() throws Exception {
         state = State.SIGNEDIN;
-        Map listOfGames = serverFacade.listGames(authData);
-        return listOfGames.toString();
+        ListGamesResult gamesResult = serverFacade.listGames(authData);
+        gameList = gamesResult.games();
+        String result = "";
+        if (gameList.isEmpty()) {
+            return "No Games Yet.";
+        } else {
+            for (int i = 0; i < gameList.size(); i++) {
+                String white;
+                String black;
+                var game = gameList.get(i);
+                if (game.whiteUsername() == null) {
+                    white = "None";
+                } else {
+                    white = game.whiteUsername();
+                }
+                if (game.blackUsername() == null) {
+                    black = "None";
+                } else {
+                    black = game.blackUsername();
+                }
+
+                result = result + (i+1) + ". " + game.gameName() + " - " + "white: " + white + "  black:" + black;
+                result = result + "\n";
+            }
+        }
+        return result;
     }
 
     private String joinGame(String[] params) throws Exception{
