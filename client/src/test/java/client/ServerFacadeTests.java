@@ -71,7 +71,7 @@ public class ServerFacadeTests {
     @Test
     void joinGame() throws Exception {
         Map gameInfo = facade.createGame("game1", player1Auth);
-        String gameID = gameInfo.get("gameID").toString();
+        int gameID = ((Double) gameInfo.get("gameID")).intValue();
         String result = facade.joinGame(gameID, "WHITE", player1Auth);
         assertEquals("{}", result);
     }

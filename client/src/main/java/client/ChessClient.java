@@ -104,7 +104,8 @@ public class ChessClient {
 
     private String joinGame(String[] params) throws Exception{
         state = State.SIGNEDIN;
-        return serverFacade.joinGame(params[0], params[1], authData);
+        int gameId = Integer.parseInt(params[0]);
+        return serverFacade.joinGame(gameId, params[1], authData);
     }
 
 }

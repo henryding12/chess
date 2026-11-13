@@ -63,7 +63,7 @@ public class ServerFacade {
         return handleResponse(response, Map.class);
     }
 
-    public String joinGame(String gameId, String color, AuthData authData) throws Exception {
+    public String joinGame(int gameId, String color, AuthData authData) throws Exception {
         var request = buildRequest("PUT", "/game", Map.of("gameID", gameId, "playerColor", color), authData);
         var response = sendRequest(request);
         handleResponse(response, null);
